@@ -1,0 +1,429 @@
+{
+  "name": "automation to generate message to every employee who accepted in copmany",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -672,
+        -32
+      ],
+      "id": "b0ce9f10-7500-4b0e-b5cd-1be30738bd7e",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=We will send a message to everyone who is accepted by our company, and we will create a formal email informing them that they have been accepted for the position they applied for and that they will be contacted by phone soon.\n\nperson name: {{ $('agents').all()[$itemIndex].json.name }}\njob title:  {{ $('agents').all()[$itemIndex].json['job Title'] }}\n\nTHE MAIL FORMAT IS HTML",
+        "options": {
+          "systemMessage": "You are a hiring assistant for Zone Tech.\n\nWrite a professional email.\n\nSTRICT RULES:\n- Return ONLY the content that should appear inside the HTML <body>.\n- DO NOT generate <html>, </html>.\n- DO NOT generate <head>, </head>.\n- DO NOT generate <body>, </body>.\n- DO NOT generate markdown.\n- DO NOT generate code blocks.\n- Output raw HTML tags only.\n- The first character of the response must be a valid HTML tag such as <p>.\n- The last line must be:\n\n<p>Zone Team.</p>\n<p>Best regards</p>\n\nVERY IMPORTANT:\nIf you generate anything outside the body content, your answer is incorrect."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -64,
+        -176
+      ],
+      "id": "46f72d45-2f32-45a6-b360-7e8b347c3708",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        64,
+        160
+      ],
+      "id": "7e289592-cc09-4471-8310-f144fd5f7ae8",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "Cbe5JPLmtklaqkLq",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('agents').all()[$itemIndex].json['email'] }}",
+        "subject": "={{ `apply on ${$('agents').all()[$itemIndex].json['job Title']}` }}",
+        "message": "={{ $json.output }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        64
+      ],
+      "id": "7d5df4fa-aba0-4920-92aa-b6bc1229f193",
+      "name": "Send a message",
+      "webhookId": "fc1adebf-f07a-42a6-ba4e-9eea187a2e37",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GLnVGv7GbWz53pLs",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f10f6029-2bc2-4595-a96d-71cdea6143b6",
+              "leftValue": "={{ $json[\"is sent\"] }}",
+              "rightValue": "sent",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -256,
+        -32
+      ],
+      "id": "a6fd5771-9c0c-47e5-9224-8ecab3dd6503",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json.data || [];\n\nreturn data.map(item => ({\n  json: {\n    output: item.output.replace(/<[^>]*>/g, '').trim()\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        -288
+      ],
+      "id": "5f005994-f62f-452c-8c95-cc0f63a63898",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        208,
+        -304
+      ],
+      "id": "3eaa842d-7a32-4c5d-9be9-bd9530c16b75",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1f8yUG70Dlu7Ean3ctPnWQRuqdH03c48eg4rLFxkAjIc",
+          "mode": "list",
+          "cachedResultName": "hiring sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f8yUG70Dlu7Ean3ctPnWQRuqdH03c48eg4rLFxkAjIc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f8yUG70Dlu7Ean3ctPnWQRuqdH03c48eg4rLFxkAjIc/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -480,
+        160
+      ],
+      "id": "49ef2b93-8ccb-41dd-adb7-ce0dc3ac0e73",
+      "name": "agents",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "IBRIuAukNGZgaBQG",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1f8yUG70Dlu7Ean3ctPnWQRuqdH03c48eg4rLFxkAjIc",
+          "mode": "list",
+          "cachedResultName": "hiring sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f8yUG70Dlu7Ean3ctPnWQRuqdH03c48eg4rLFxkAjIc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f8yUG70Dlu7Ean3ctPnWQRuqdH03c48eg4rLFxkAjIc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ $('agents').all()[$itemIndex].json[\"email\"] }}",
+            "is sent": "sent",
+            "message": "={{ $json.output }}"
+          },
+          "matchingColumns": [
+            "email"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "age",
+              "displayName": "age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "job Title",
+              "displayName": "job Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "is sent",
+              "displayName": "is sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        576,
+        -128
+      ],
+      "id": "191933ec-f1a7-4626-8c3a-44a0ccc50367",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "IBRIuAukNGZgaBQG",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Code in JavaScript": [
+      {
+        "json": {
+          "output": "Dear Ziad Ahmed Fawzy,\nWe are pleased to inform you that you have been accepted for the position of MERN Stack Developer at Zone Tech. We were impressed by your skills and experience, and we believe you will be a valuable addition to our team.\nYou will be contacted by phone soon to discuss the next steps in the onboarding process and to answer any questions you may have.\nCongratulations once again, and welcome to Zone Tech!\nZone Team.\nBest regards"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "output": "Dear Mostafa Ali Hessen,\nWe are pleased to inform you that you have been accepted for the position of Cloud Computing at Zone Tech. Congratulations!\nYou will be contacted by phone shortly to discuss the next steps in the hiring process.\nThank you for your interest in joining our team, and we look forward to speaking with you soon.\nZone Team.\nBest regards"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "output": "Dear Yousef Wael Mostafa,\nWe are pleased to inform you that you have been accepted for the position of Customer Support at Zone Tech. Congratulations on this achievement!\nOur team will be reaching out to you via phone shortly to discuss the next steps and provide you with more details regarding your new role.\nWe are excited to welcome you to our team and look forward to your contributions.\nZone Team.\nBest regards"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "output": "Dear Marwan Sayed Gohary,\nWe are pleased to inform you that you have been accepted for the position of Sales Manager at Zone Tech. Congratulations on this achievement!\nYou will be contacted shortly via phone for further details regarding your onboarding process and next steps.\nOnce again, congratulations, and welcome to the Zone Tech family!\nZone Team.\nBest regards"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "agents",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "agents": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "35e6b275-506d-48fa-bcad-bab95f27528e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "093746f5170e08a3b4cd1254db2167c74f68ea616f3dcf2497ea2ff9271b3c9c"
+  },
+  "nodeGroups": [],
+  "id": "LeQRmi6BblPJfnp6",
+  "tags": []
+}
