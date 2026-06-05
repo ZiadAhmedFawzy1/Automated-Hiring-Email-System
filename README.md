@@ -1,4 +1,4 @@
-# 📄 Automated Hiring Email System (n8n Workflow)
+# 📄 Automated Hiring Email System
 
 ## 📌 Overview
 
