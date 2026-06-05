@@ -43,6 +43,13 @@ An AI model generates a formal HTML acceptance email using:
 
 ### 5. Send Email
 The generated HTML email is sent to the candidate via email service (SMTP / Gmail / SendGrid).
+---
+
+## 🖼️ Workflow Architecture
+
+<p align="center">
+  <img src="./assets/Screenshot 2026-06-05 115731-Photoroom.png" alt="Workflow Architecture" width="100%">
+</p>
 
 ---
 
