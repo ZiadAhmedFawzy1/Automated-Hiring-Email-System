@@ -1,5 +1,4 @@
 {
-  "name": "automation to generate message to every employee who accepted in copmany",
   "nodes": [
     {
       "parameters": {},
@@ -7,7 +6,7 @@
       "typeVersion": 1,
       "position": [
         -672,
-        -32
+        -112
       ],
       "id": "b0ce9f10-7500-4b0e-b5cd-1be30738bd7e",
       "name": "When clicking ‘Execute workflow’"
@@ -23,8 +22,8 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        -64,
-        -176
+        0,
+        -112
       ],
       "id": "46f72d45-2f32-45a6-b360-7e8b347c3708",
       "name": "AI Agent"
@@ -43,8 +42,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
       "position": [
-        64,
-        160
+        80,
+        112
       ],
       "id": "7e289592-cc09-4471-8310-f144fd5f7ae8",
       "name": "OpenAI Chat Model",
@@ -67,8 +66,8 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        592,
-        64
+        800,
+        -32
       ],
       "id": "7d5df4fa-aba0-4920-92aa-b6bc1229f193",
       "name": "Send a message",
@@ -109,8 +108,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -256,
-        -32
+        -224,
+        -112
       ],
       "id": "a6fd5771-9c0c-47e5-9224-8ecab3dd6503",
       "name": "If"
@@ -122,8 +121,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        400,
-        -288
+        576,
+        -304
       ],
       "id": "5f005994-f62f-452c-8c95-cc0f63a63898",
       "name": "Code in JavaScript"
@@ -136,7 +135,7 @@
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        208,
+        352,
         -304
       ],
       "id": "3eaa842d-7a32-4c5d-9be9-bd9530c16b75",
@@ -163,11 +162,13 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        -480,
-        160
+        -448,
+        -112
       ],
       "id": "49ef2b93-8ccb-41dd-adb7-ce0dc3ac0e73",
       "name": "agents",
+      "retryOnFail": true,
+      "maxTries": 5,
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "IBRIuAukNGZgaBQG",
@@ -280,8 +281,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        576,
-        -128
+        800,
+        -304
       ],
       "id": "191933ec-f1a7-4626-8c3a-44a0ccc50367",
       "name": "Append or update row in sheet",
@@ -291,44 +292,85 @@
           "name": "Google Sheets OAuth2 API"
         }
       }
-    }
-  ],
-  "pinData": {
-    "Code in JavaScript": [
-      {
-        "json": {
-          "output": "Dear Ziad Ahmed Fawzy,\nWe are pleased to inform you that you have been accepted for the position of MERN Stack Developer at Zone Tech. We were impressed by your skills and experience, and we believe you will be a valuable addition to our team.\nYou will be contacted by phone soon to discuss the next steps in the onboarding process and to answer any questions you may have.\nCongratulations once again, and welcome to Zone Tech!\nZone Team.\nBest regards"
-        },
-        "pairedItem": {
-          "item": 0
-        }
+    },
+    {
+      "parameters": {
+        "content": "## reqired to implement\n* put credinatials of open AI, & google E-maill, and google sheet [ziad's github](https://github.com/ZiadAhmedFawzy1)",
+        "width": 448
       },
-      {
-        "json": {
-          "output": "Dear Mostafa Ali Hessen,\nWe are pleased to inform you that you have been accepted for the position of Cloud Computing at Zone Tech. Congratulations!\nYou will be contacted by phone shortly to discuss the next steps in the hiring process.\nThank you for your interest in joining our team, and we look forward to speaking with you soon.\nZone Team.\nBest regards"
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        -320
+      ],
+      "id": "17d79be4-4932-4099-afa9-3de16a5c75f8",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "sendTo": "ziadbusiness2000@gmail.com",
+        "subject": "Approval requirements",
+        "message": "Hello master ziad, this is templetes which is sending to employee who accept with us.\n",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
         },
-        "pairedItem": {
-          "item": 0
-        }
+        "options": {}
       },
-      {
-        "json": {
-          "output": "Dear Yousef Wael Mostafa,\nWe are pleased to inform you that you have been accepted for the position of Customer Support at Zone Tech. Congratulations on this achievement!\nOur team will be reaching out to you via phone shortly to discuss the next steps and provide you with more details regarding your new role.\nWe are excited to welcome you to our team and look forward to your contributions.\nZone Team.\nBest regards"
-        },
-        "pairedItem": {
-          "item": 0
-        }
-      },
-      {
-        "json": {
-          "output": "Dear Marwan Sayed Gohary,\nWe are pleased to inform you that you have been accepted for the position of Sales Manager at Zone Tech. Congratulations on this achievement!\nYou will be contacted shortly via phone for further details regarding your onboarding process and next steps.\nOnce again, congratulations, and welcome to the Zone Tech family!\nZone Team.\nBest regards"
-        },
-        "pairedItem": {
-          "item": 0
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        352,
+        -112
+      ],
+      "id": "41ac8edd-7852-499c-abbc-6a23286f76e1",
+      "name": "Send a message1",
+      "webhookId": "13ee18ab-531c-48b3-b907-27afbc1910bf",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GLnVGv7GbWz53pLs",
+          "name": "Gmail OAuth2 API"
         }
       }
-    ]
-  },
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ce11f929-e959-47ef-94f0-8c2ad87d32b6",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        544,
+        16
+      ],
+      "id": "69813b4e-2e02-4f8a-9efd-d54effed0f99",
+      "name": "If1"
+    }
+  ],
   "connections": {
     "When clicking ‘Execute workflow’": {
       "main": [
@@ -336,17 +378,6 @@
           {
             "node": "agents",
             "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "OpenAI Chat Model": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_languageModel",
             "index": 0
           }
         ]
@@ -361,8 +392,19 @@
             "index": 0
           },
           {
-            "node": "Send a message",
+            "node": "Send a message1",
             "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
             "index": 0
           }
         ]
@@ -411,19 +453,54 @@
           }
         ]
       ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
     }
   },
-  "active": false,
-  "settings": {
-    "executionOrder": "v1",
-    "binaryMode": "separate"
+  "pinData": {
+    "Code in JavaScript": [
+      {
+        "output": "Dear Ziad Ahmed Fawzy,\nWe are pleased to inform you that you have been accepted for the position of MERN Stack Developer at Zone Tech. We were impressed by your skills and experience, and we believe you will be a valuable addition to our team.\nYou will be contacted by phone soon to discuss the next steps in the onboarding process and to answer any questions you may have.\nCongratulations once again, and welcome to Zone Tech!\nZone Team.\nBest regards"
+      },
+      {
+        "output": "Dear Mostafa Ali Hessen,\nWe are pleased to inform you that you have been accepted for the position of Cloud Computing at Zone Tech. Congratulations!\nYou will be contacted by phone shortly to discuss the next steps in the hiring process.\nThank you for your interest in joining our team, and we look forward to speaking with you soon.\nZone Team.\nBest regards"
+      },
+      {
+        "output": "Dear Yousef Wael Mostafa,\nWe are pleased to inform you that you have been accepted for the position of Customer Support at Zone Tech. Congratulations on this achievement!\nOur team will be reaching out to you via phone shortly to discuss the next steps and provide you with more details regarding your new role.\nWe are excited to welcome you to our team and look forward to your contributions.\nZone Team.\nBest regards"
+      },
+      {
+        "output": "Dear Marwan Sayed Gohary,\nWe are pleased to inform you that you have been accepted for the position of Sales Manager at Zone Tech. Congratulations on this achievement!\nYou will be contacted shortly via phone for further details regarding your onboarding process and next steps.\nOnce again, congratulations, and welcome to the Zone Tech family!\nZone Team.\nBest regards"
+      }
+    ]
   },
-  "versionId": "35e6b275-506d-48fa-bcad-bab95f27528e",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "093746f5170e08a3b4cd1254db2167c74f68ea616f3dcf2497ea2ff9271b3c9c"
-  },
-  "nodeGroups": [],
-  "id": "LeQRmi6BblPJfnp6",
-  "tags": []
+  }
 }
