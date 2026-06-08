@@ -48,7 +48,7 @@ The generated HTML email is sent to the candidate via email service (SMTP / Gmai
 ## 🖼️ Workflow Architecture
 
 <p align="center">
-  <img src="./assets/Screenshot 2026-06-05 115731-Photoroom.png" alt="Workflow Architecture" width="100%">
+  <img src="./assets/workflow.png" alt="Workflow Architecture" width="100%">
 </p>
 
 ---
